@@ -1,0 +1,12 @@
+<mat-tab-group mat-align-tabs="center" [selectedIndex]="tabNumber" (selectedTabChange)="tabChanged($event.index)">
+  <mat-tab label="Todos"></mat-tab>
+  <mat-tab label="DRC"></mat-tab>
+  <mat-tab label="DCM"></mat-tab>
+  <mat-tab label="WBC"></mat-tab>
+  <mat-tab label="EATON"></mat-tab>
+</mat-tab-group>
+
+<shared-data-table [columns]="columns" [dataSource]="dataSource" [displayedColumns]="displayedColumns" *ngIf="!loading"
+  (operationEvent)="onOperation($event)"></shared-data-table>
+<shared-progress-bar mode="indeterminate" *ngIf="loading"></shared-progress-bar>
+

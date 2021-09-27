@@ -1,0 +1,14 @@
+<shared-form-dialog (closeEvent)="onClose()" 
+[disabled]="loading || 
+mfc?.mainForm.pristine || 
+!mfc?.mainForm.valid || 
+mfc.isloading || 
+!mfc.bandSelectedUser ||
+ mfc.bandDuplicatedRol || 
+ mfc.bandDuplicatedUser || 
+ mfc.bandDifRol || 
+ mfc.nameUser==null || 
+ mfc.nameSupervisor==null"
+  [loading]="loading" (submitEvent)="onSubmit()" [title]="title">
+  <app-main-form [data]="data"></app-main-form>
+</shared-form-dialog>

@@ -1,0 +1,90 @@
+<form autocomplete="off" [formGroup]="mainForm">
+    <input formControlName="id" type="hidden" />
+    <input formControlName="loginName" type="hidden"/>
+    <input formControlName="loginNameSupervisor"  type="hidden"/>
+    <mat-form-field style="width: 100%;">
+      <mat-label>Nombre</mat-label>
+      <input type="text"
+             placeholder="Selecciona un usuario"
+             aria-label="Nombre *"
+             matInput
+             formControlName="name"
+             [matAutocomplete]="auto"
+      >
+      <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"  (optionSelected)='getUserData($event.option.id)' >
+        <mat-option *ngFor="let option of filteredOptions | async" [value]="option.Nombre" [id]="option.Email">
+          {{option.Nombre}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+    <label><strong>Roles del usuario seleccionado</strong></label>
+    <div *ngFor="let ur of userUsedRoles">
+      <label>{{ur}}</label>
+    </div>
+    <div fxLayout="row" fxLayout.xs="column">
+      <div fxFlex="60%">
+        <mat-form-field appearance="fill">
+        <mat-label>Rol</mat-label>
+            <mat-select formControlName="rol" (selectionChange)="VerifyRol()" >
+                <mat-option *ngFor="let rol of roles" [value]="rol">
+                    {{rol}}
+                </mat-option>
+            </mat-select>
+            <mat-error>
+                Este campo es obligatorio
+            </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex="40%">
+        <mat-form-field>
+        <mat-label>Organizacion</mat-label>
+            <mat-select formControlName="organization"  (selectionChange)="VerifyRol()" >
+                <mat-option value="DRC">DRC</mat-option>
+                <mat-option value="DCM">DCM</mat-option>
+                <mat-option value="WBC">WBC</mat-option>
+                <mat-option value="EATON">EATON</mat-option>
+            </mat-select>
+            <mat-error>
+                Este campo es obligatorio
+            </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <label *ngIf="bandDuplicatedRol" style="color: red;">*Este rol y organización ya se encuentra asignado a 2 usuarios.<br/></label>
+    <label *ngIf="bandDifRol" style="color: red;">*El usuario seleccionado ya tiene otro rol asignado<br/></label>
+      <label *ngIf="!bandSelectedUser" style="color: red;">*No se ha seleccionado un usuario.<br/></label>
+      <label *ngIf="bandDuplicatedUser" style="color: red;">*Este usuario ya tiene este rol y organización asignado.<br/></label>
+      <label *ngIf="nameUser==null || nameSupervisor==null" style="color: red;">* Verifica que el usuario y supervisor cuenten con permisos en el sitio<br/></label>
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Usuario</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+              <shared-progress-bar mode="indeterminate" *ngIf="isloading"></shared-progress-bar>
+              <label>WWID: {{idUser}} </label><br/>
+              <label>Nombre: {{nameUser}} </label><br/>
+              <label>Correo: {{emailUser}} </label>
+        </mat-card-content>
+    </mat-card>
+    <br />
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Supervisor</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <shared-progress-bar mode="indeterminate" *ngIf="isloading"></shared-progress-bar>
+            <label>WWID: {{idSupervisor}} </label><br/>
+            <label>Nombre: {{nameSupervisor}} </label><br/>
+            <label>Correo: {{emailSupervisor}} </label>
+        </mat-card-content>
+      </mat-card>
+
+    <!--<mat-form-field style="width: 100%;">
+    <input formControlName="supervisor" matInput maxlength="80" placeholder="Supervisor *" />
+    <mat-error>
+        Este campo es obligatorio
+    </mat-error>
+    </mat-form-field>
+  -->
+  </form>
+  

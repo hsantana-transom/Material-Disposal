@@ -1,0 +1,407 @@
+
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="./uploadFile2.js"></script>
+<form autocomplete="off" [formGroup]="mainForm">
+  <input formControlName="id" type="hidden" />
+  <h1>Request</h1>
+  <mat-card style="width: 20%;margin-left:4%;">
+    <table>
+      <tr>
+        <td><strong>Core Management</strong></td>
+        <td [style.color]="a1=='Aprobado' ? 'green' : (a1=='Rechazado' ? 'red' : 'black')">{{a1}}</td>
+<!--        <p *ngIf="a1='Aprobado'" style="color: green;">{a1}</p>
+        <p *ngIf="a1='Rechazado'" style="color:red">{a1}</p>
+        <p *ngIf="a1='Pendiente'" style="color:blue">{a1}</p>
+  -->  
+      </tr>
+
+      <tr>
+        <td><strong>Planeador</strong></td>
+        <td [style.color]="a2=='Aprobado' ? 'green' : (a2=='Rechazado' ? 'red' : 'black')">{{a2}}</td>
+      </tr>
+
+      <tr>
+        <td><strong>Gerente de Planeación</strong></td>
+        <td [style.color]="a3=='Aprobado' ? 'green' : (a3=='Rechazado' ? 'red' : 'black')">{{a3}}</td>
+        
+      </tr>
+
+      <tr>
+        <td><strong>Ingeniero de Producto</strong></td>
+        <td [style.color]="a4=='Aprobado' ? 'green' : (a4=='Rechazado' ? 'red' : 'black')">{{a4}}</td>
+      </tr>
+
+      <tr>
+        <td><strong>Gerente de Ingeniería</strong></td>
+        <td [style.color]="a5=='Aprobado' ? 'green' : (a5=='Rechazado' ? 'red' : 'black')">{{a5}}</td>
+      </tr>
+
+      <tr>
+        <td><strong>Coordinador de Finanzas</strong></td> 
+        <td [style.color]="a6=='Aprobado' ? 'green' : (a6=='Rechazado' ? 'red' : 'black')">{{a6}}</td>
+      </tr>
+
+      <tr>
+        <td><strong>Gerente de Control de Producción</strong></td>
+        <td [style.color]="a7=='Aprobado' ? 'green' : (a7=='Rechazado' ? 'red' : 'black')">{{a7}}</td>
+      </tr>
+
+      <tr>
+        <td><strong>Director de Planta</strong></td>
+        <td [style.color]="a8=='Aprobado' ? 'green' : (a8=='Rechazado' ? 'red' : 'black')">{{a8}}</td>
+      </tr>
+    </table>
+  
+  </mat-card>
+  <br/>
+  <mat-card style="width: 90%; margin:auto">
+    <mat-progress-bar mode="indeterminate" *ngIf='loading'></mat-progress-bar>
+    <div>
+      <h2>Recon Core Disposal Information</h2>
+    </div>
+    <div>
+      <label>Status:</label>
+      <strong>{{status}}</strong>
+    </div>
+    <div fxLayout="row" fxLayout.xs="column">
+      <div fxFlex="50%">
+        <mat-form-field >
+          <mat-label>Organizacion *</mat-label>
+          <mat-select formControlName="organization" (selectionChange)="CheckOrganizationSelected($event.value)">
+            <mat-option value="DRC">DRC</mat-option>
+            <mat-option value="DCM">DCM</mat-option>
+            <mat-option value="WBC">WBC</mat-option>
+            <mat-option value="EATON">EATON</mat-option>
+          </mat-select>
+          <mat-error>
+              Este campo es obligatorio
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex="50%">
+        <mat-form-field style="width: 90%;">
+          <mat-label>NP-C/Z</mat-label>
+          <input type="text"
+                placeholder="Selecciona un NP-C/Z"
+                aria-label="NP-C/Z *"
+                matInput
+                formControlName="npcz"
+                [matAutocomplete]="autoNPCZ"
+          >
+          <mat-autocomplete autoActiveFirstOption #autoNPCZ="matAutocomplete" (optionSelected)="optionSelected($event.option.value,'npcz')">
+            <mat-option *ngFor="let optionNPCZ of filteredOptionsNPCZ | async" [value]="optionNPCZ.Segment" >
+              {{optionNPCZ.Segment}}
+            </mat-option>
+            
+          </mat-autocomplete>
+          <mat-spinner *ngIf="bandNpcz" strokeWidth=3 [diameter]="20"></mat-spinner>
+          <mat-error>
+            Este campo es obligatorio
+          </mat-error>
+          <span *ngIf="!bandNPCZSelected" style="color: red;">*Seleccione una opción sugerida</span>
+        </mat-form-field>
+        
+      </div>
+    </div>
+
+    <div fxLayout="row" fxLayout.xs="column">
+      <div fxFlex="50%">
+        <mat-form-field style="width: 90%;">
+          <mat-label>Np-RX</mat-label>
+          <input type="text"
+                placeholder="Selecciona un Np-RX"
+                aria-label="Np-RX *"
+                matInput
+                formControlName="nprx"
+                [matAutocomplete]="autoNPRX"
+
+          >
+          <mat-autocomplete autoActiveFirstOption #autoNPRX="matAutocomplete" (optionSelected)="optionSelected($event.option.value,'nprx')" >
+            <mat-option *ngFor="let optionNPRX of filteredOptionsNPRX | async" [value]="optionNPRX.Segment" >
+              {{optionNPRX.Segment}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-spinner *ngIf="bandNprx" strokeWidth=3 [diameter]="20"></mat-spinner>
+          <mat-error>
+            Este campo es obligatorio
+          </mat-error>
+          <span *ngIf="!bandNPRXSelected" style="color: red;">*Seleccione una opción sugerida</span>
+        </mat-form-field>
+      </div>
+      <div fxFlex="50%">
+        <mat-form-field style="width: 90%;">
+          <mat-label>Np new</mat-label>
+          <input type="text"
+                placeholder="Selecciona un Np new"
+                aria-label="NP New *"
+                matInput
+                formControlName="npnew"
+                [matAutocomplete]="autoNPNEW"
+          >
+          <mat-autocomplete autoActiveFirstOption #autoNPNEW="matAutocomplete">
+            <mat-option *ngFor="let optionNPNEW of filteredOptionsNPNEW | async" [value]="optionNPNEW.Segment">
+              {{optionNPNEW.Segment}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-spinner *ngIf="bandNpnew" strokeWidth=3 [diameter]="20"></mat-spinner>
+          <mat-error>
+            Este campo es obligatorio
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+  <mat-form-field style="width: 100%;">
+    <input type="number" formControlName="oh" matInput placeholder="Piezas a Disponer *" />
+    <mat-error>
+      Este campo es obligatorio
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field style="width: 100%;">
+    <input  formControlName="model" matInput maxlength="255" placeholder="Model/Year"  />
+  </mat-form-field>
+  <mat-form-field style="width: 100%;">
+    <input  formControlName="componente" matInput maxlength="255" placeholder="Componente live cicle" />
+  </mat-form-field>
+
+  <mat-form-field style="width: 100%;">
+    <textarea  formControlName="comments" matInput maxlength="500" placeholder="Comentarios"></textarea>
+    <mat-error>
+      Este campo es obligatorio
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field style="width: 100%;">
+    <input type="number" formControlName="unitPrice" [disabled]="status!='Under Review' && !isCoreManager" matInput placeholder="Item Cost" />
+  </mat-form-field>
+
+
+  <mat-form-field style="width: 100%;">
+    <input  formControlName="commentsCore" [disabled]="status!='Under Review' && !isCoreManager" matInput maxlength="255" placeholder="Comentarios Core Manager" />
+  </mat-form-field>
+  <div style="text-align: right;">
+    <label style="font-size: medium;"><strong>Item cost * Piezas a disponer: {{totalAmount}}</strong></label>
+  </div>
+  <div>
+    <label>Sales Last 5 years </label>
+    <input (change)="readFile($event,'5yearsFiles')" #fileInput1  style="display: none;" type="file" id="getFile3"/>
+    <button (click)="fileInput1.value='';fileInput1.click()"  [disabled]="isRequester || status!='Under Review' || files5years.length==5 || !isCoreManager || bandUploadingFile" mat-raised-button>Seleccionar archivo</button>
+    <div >
+      <table>
+        <tr  *ngFor="let f of files5years;let i=index">
+          <td><span><a href="/sites/GRP_CC44493/Shared%20Documents/{{filesFolder}}/{{f}}">{{f}}</a></span></td>
+          <td>
+            <button *ngIf="status=='Under Review'" [disabled]="!isCoreManager || bandUploadingFile" (click)="onDelete(i,'files5years')" #onDeleteButton mat-icon-button matTooltip="Eliminar">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+    </table>
+    </div>
+  </div>
+  <div>
+    <label>Sales Forecast / Core coverage </label>
+    <input (change)="readFile($event,'ForecastFiles')" #fileInput2  style="display: none;" type="file" id="getFile2"/>
+    <button (click)="fileInput2.value='';fileInput2.click()" [disabled]="isRequester || status!='Under Review' || filesForecast.length==5 || !isCoreManager || bandUploadingFile" mat-raised-button>Seleccionar archivo</button>
+    <div >
+      <table>
+        <tr  *ngFor="let f of filesForecast;let i=index">
+          <td><span><a href="/sites/GRP_CC44493/Shared%20Documents/{{filesFolder}}/{{f}}">{{f}}</a></span></td>
+          <td>
+            <button *ngIf="status=='Under Review'" [disabled]="!isCoreManager || bandUploadingFile" (click)="onDelete(i,'filesForecast')" #onDeleteButton mat-icon-button matTooltip="Eliminar">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+    </table>
+    </div>
+  </div>
+  <div>
+    <label>Anexos </label>
+    <input (change)="readFile($event,'UserFiles')" #fileInput3 style="display: none;" type="file" id="getFile1"/>
+    <button (click)="fileInput3.value='';fileInput3.click()" *ngIf="status=='New'" [disabled]="files.length==5 || bandUploadingFile" mat-raised-button>Seleccionar archivo</button>
+    <div >
+      <table>
+        <tr  *ngFor="let f of files;let i=index">
+          <td><span><a href="/sites/GRP_CC44493/Shared%20Documents/{{filesFolder}}/{{f}}">{{f}}</a></span></td>
+          <td>
+            <button (click)="onDelete(i,'UserFiles')" [disabled]="bandUploadingFile" *ngIf="status=='New'" #onDeleteButton mat-icon-button matTooltip="Eliminar">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <span *ngIf="bandFileRepeated" style="color:red">*Archivo repetido. Renombra el archivo e intenta subirlo nuevamente</span>
+  <mat-progress-bar mode="indeterminate" *ngIf='loading'></mat-progress-bar>
+  <div align="right">
+    <button color="primary"  id="bGuardar" (click)="onSubmit('Guardar')" [disabled]="bandUploadingFile ||loading || mainForm.pristine || !mainForm.valid || !bandNPCZSelected || !bandNPRXSelected"  *ngIf="status=='New'" mat-raised-button style="margin-left:5px;margin-right: 5px;">Guardar</button>
+    <button color="primary"  [disabled]="files5years.length==0 || filesForecast.length==0 || !bandCoreApproval" *ngIf="bandButtonApprovalCore" (click)="onSubmit('aprobadoByCore')" mat-raised-button style="margin-left:5px;margin-right: 5px;">Aprobar</button>
+    <!--<button color="primary"  (click)="onSubmit('aprobado')" *ngIf="bandButtonApproval" mat-raised-button style="margin-left:5px;margin-right: 5px;">Aprobar</button>
+    <button color="warn"   (click)="onSubmit('rechazado')" *ngIf="bandButtonReject" mat-raised-button style="margin-left:5px;margin-right: 5px;">Rechazar</button>
+    -->
+    <button color="primary"  (click)="openAppovalCard('aprobado')" *ngIf="bandButtonApproval" mat-raised-button style="margin-left:5px;margin-right: 5px;">Aprobar</button>
+    <button color="warn"   (click)="openAppovalCard('rechazado')" *ngIf="bandButtonReject" mat-raised-button style="margin-left:5px;margin-right: 5px;">Rechazar</button>
+    
+    <button (click)="cancelRequest()"  mat-raised-button style="margin-left:5px;margin-right: 5px;">Cancelar</button>
+  </div>
+  <br />
+  <!--
+-----------------------------------------------------------------
+----------------COMPLETAR SOLICITUD -----------------------------
+-----------------------------------------------------------------
+  -->
+  <!--
+  <div *ngIf="bandAlmacenView">
+    <mat-card style="width: 98%;">
+      <mat-card-header>
+        <mat-card-title>Evidencia Almacén</mat-card-title>
+      </mat-card-header>
+      <div fxLayout="row" fxLayout.xs="column">
+        <div fxFlex="50%">
+          <mat-form-field >
+            <input formControlName="fechaE" [matDatepicker]="fechaE" matInput placeholder="Fecha Entrega" readonly />
+            <mat-datepicker-toggle matSuffix [for]="fechaE"></mat-datepicker-toggle>
+            <mat-datepicker #fechaE></mat-datepicker>
+            <mat-error>
+                Este campo es obligatorio
+            </mat-error>
+          </mat-form-field >
+        </div>
+        <div fxFlex="50%">
+          <mat-form-field >
+            <input formControlName="fechaS" [matDatepicker]="fechaS" matInput placeholder="Fecha Salida" readonly />
+            <mat-datepicker-toggle matSuffix [for]="fechaS"></mat-datepicker-toggle>
+            <mat-datepicker #fechaS></mat-datepicker>
+            <mat-error>
+                Este campo es obligatorio
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <mat-form-field style="width: 100%;">
+        <input formControlName="commentsSupervisor"   matInput maxlength="255" placeholder="Comentarios de supervisor" />
+      </mat-form-field>
+      <input (change)="readFile($event,'completeFiles')" #fileInput4 style="display: none;" type="file" id="getFile4"/>
+      <button (click)="fileInput4.value='';fileInput4.click()" [disabled]="filesCompletar.length==5 || !isSupervisorAlmacen ||  status!='Approved'" mat-raised-button>Subir evidencia</button>
+      <div >
+        <table>
+          <tr  *ngFor="let f of filesCompletar;let i=index">
+            <td><span><a href="/sites/GRP_CC44493/Shared%20Documents/{{filesFolder}}/{{f}}">{{f}}</a></span></td>
+            <td>
+              <button (click)="onDelete(i,'completeFiles')" [disabled]="!isSupervisorAlmacen || status!='Approved'" #onDeleteButton mat-icon-button matTooltip="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <span *ngIf="bandFileRepeated" style="color:red">*Archivo repetido. Renombra el archivo e intenta subirlo nuevamente</span>
+      <div align="right">
+        <button color="primary"  (click)="onSubmit('completado')" *ngIf="status=='Approved'" [disabled]="!isSupervisorAlmacen || mainForm.get('fechaS').value==null || mainForm.get('fechaE').value==null || mainForm.get('commentsSupervisor').value==null || mainForm.get('commentsSupervisor').value=='' || filesCompletar.length==0"  mat-raised-button style="margin-left:auto;">Completar Solicitud</button>
+      </div>
+    </mat-card>
+  </div>
+-->
+  <div *ngIf="bandAlmacenView">
+    <mat-divider></mat-divider>
+    
+      <h2>Evidencia Almacén</h2>
+
+      <div fxLayout="row" fxLayout.xs="column">
+        <div fxFlex="50%">
+          <mat-form-field >
+            <input formControlName="fechaE" [matDatepicker]="fechaE" matInput placeholder="Fecha Entrega" readonly />
+            <mat-datepicker-toggle matSuffix [for]="fechaE"></mat-datepicker-toggle>
+            <mat-datepicker #fechaE></mat-datepicker>
+            <mat-error>
+                Este campo es obligatorio
+            </mat-error>
+          </mat-form-field >
+        </div>
+        <div fxFlex="50%">
+          <mat-form-field >
+            <input formControlName="fechaS" [matDatepicker]="fechaS" matInput placeholder="Fecha Salida" readonly />
+            <mat-datepicker-toggle matSuffix [for]="fechaS"></mat-datepicker-toggle>
+            <mat-datepicker #fechaS></mat-datepicker>
+            <mat-error>
+                Este campo es obligatorio
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <mat-form-field style="width: 100%;">
+        <input formControlName="commentsSupervisor"   matInput maxlength="255" placeholder="Comentarios de supervisor" />
+      </mat-form-field>
+      <input (change)="readFile($event,'completeFiles')" #fileInput4 style="display: none;" type="file" id="getFile4"/>
+      <button (click)="fileInput4.value='';fileInput4.click()" [disabled]="filesCompletar.length==5 || !isSupervisorAlmacen ||  status!='Approved' || bandUploadingFile" mat-raised-button>Subir evidencia</button>
+      <div >
+        <table>
+          <tr  *ngFor="let f of filesCompletar;let i=index">
+            <td><span><a href="/sites/GRP_CC44493/Shared%20Documents/{{filesFolder}}/{{f}}">{{f}}</a></span></td>
+            <td>
+              <button (click)="onDelete(i,'completeFiles')" [disabled]="!isSupervisorAlmacen || status!='Approved' || bandUploadingFile" #onDeleteButton mat-icon-button matTooltip="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <span *ngIf="bandFileRepeated" style="color:red">*Archivo repetido. Renombra el archivo e intenta subirlo nuevamente</span>
+      <div align="right">
+        <button color="primary"  (click)="onSubmit('completado')" *ngIf="status=='Approved'" [disabled]="!isSupervisorAlmacen || mainForm.get('fechaS').value==null || mainForm.get('fechaE').value==null || mainForm.get('commentsSupervisor').value==null || mainForm.get('commentsSupervisor').value=='' || filesCompletar.length==0"  mat-raised-button style="margin-left:auto;">Completar Solicitud</button>
+      </div>
+    <mat-divider></mat-divider>
+  </div>
+
+    <!--
+-----------------------------------------------------------------
+----------------CONFIRMAR APROBACION/RECHAZO---------------------
+-----------------------------------------------------------------
+  -->
+
+  <div style="width: 100%; text-align: right;" *ngIf="bandApproverComments">
+    <mat-card style="width: 50%; display: block; margin-left: auto; ">
+      <mat-card-header>
+        <mat-card-title>{{approvalText}}</mat-card-title>
+      </mat-card-header>
+      <mat-form-field style="width: 100%;">
+        <input formControlName="commentsApprover"   matInput maxlength="255" placeholder="Comentarios de aprobador" />
+      </mat-form-field>
+      <button color="primary" *ngIf="approvalButton=='aprobado'"  (click)="onSubmit('aprobado')"  mat-raised-button >Confirmar</button>
+      <button color="warn"  *ngIf="approvalButton=='rechazado'" (click)="onSubmit('rechazado')"  mat-raised-button >Confirmar</button>
+    </mat-card>
+  </div>
+    <!--
+-----------------------------------------------------------------
+----------------COMENTARIOS APROBADORES -------------------------
+-----------------------------------------------------------------
+  -->
+  <br />
+  <div>
+    <mat-divider></mat-divider>
+    <h2>Comentarios de Aprobadores</h2>
+    <div *ngFor="let comm of listaComentarios">
+      <p style="font-family: Arial, Helvetica, sans-serif; font-size: 12;">{{comm}}</p>
+    </div>
+    <mat-divider></mat-divider>
+
+  </div>
+  <!--
+  <div>
+    <mat-card style="width: 98%;">
+      <mat-card-header>
+        <mat-card-title>Comentarios de Aprobadores</mat-card-title>
+      </mat-card-header>
+      <div *ngFor="let comm of listaComentarios">
+        <p style="font-family: Arial, Helvetica, sans-serif; font-size: 12;">{{comm}}</p>
+      </div>
+    </mat-card>
+  </div>
+-->
+</mat-card>
+  
+
+</form>
+<!--*ngIf="dataAprobador.Rol=='Core Management'"
+-->
